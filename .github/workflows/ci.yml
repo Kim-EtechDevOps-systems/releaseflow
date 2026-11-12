@@ -1,0 +1,57 @@
+name: ReleaseFlow CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Go and Python CI
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: app/go.mod
+
+      - name: Verify formatting
+        working-directory: app
+        run: |
+          test -z "$(gofmt -l .)"
+
+      - name: Static analysis
+        working-directory: app
+        run: go vet ./...
+
+      - name: Run Go tests
+        working-directory: app
+        run: go test -race -v ./...
+
+      - name: Build application
+        working-directory: app
+        run: go build -o /tmp/releaseflow .
+
+      - name: Start Go API
+        run: |
+          APP_VERSION="${GITHUB_SHA}" \
+            /tmp/releaseflow > /tmp/app.log 2>&1 &
+          echo $! > /tmp/app.pid
+
+      - name: Python integration check
+        run: |
+          python3 automation/healthcheck.py \
+            --url http://localhost:8080/health
+
+      - name: Show logs on failure
+        if: failure()
+        run: cat /tmp/app.log || true
