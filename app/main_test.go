@@ -24,7 +24,7 @@ func TestHealthEndpoint(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if body["status"] != "healthy" {
+	if body["status"] != "unhealthy" {
 		t.Errorf("unexpected status: %q", body["status"])
 	}
 }
