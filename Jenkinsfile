@@ -1,10 +1,8 @@
 pipeline {
     agent { label 'linux-go-python' }
 
-    options {
-        timestamps()
-        timeout(time: 10, unit: 'MINUTES')
-        disableConcurrentBuilds()
+    environment {
+        CGO_ENABLED = '1'
     }
 
     stages {
