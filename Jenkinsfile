@@ -33,18 +33,22 @@ pipeline {
         }
 
         stage('Integration Test') {
-            steps {
-                sh '''
-                    APP_VERSION="${GIT_COMMIT:-dev}" \
-                        ./releaseflow > app.log 2>&1 &
-                    APP_PID=$!
-                    trap 'kill "$APP_PID" 2>/dev/null || true' EXIT
+    steps {
+        sh '''
+            APP_VERSION="${GIT_COMMIT:-dev}" ./releaseflow > app.log 2>&1 &
+            APP_PID=$!
 
-                    python3 automation/healthcheck.py \
-                        --url http://127.0.0.1:8081/health
-                '''
-            }
-        }
+            trap 'kill "$APP_PID" 2>/dev/null || true' EXIT
+
+            if ! python3 automation/healthcheck.py \
+                --url http://127.0.0.1:8081/health; then
+                echo "Application health check failed"
+                cat app.log
+                exit 1
+            fi
+        '''
+    }
+}
     }
 
     post {
