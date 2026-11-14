@@ -41,7 +41,7 @@ pipeline {
                     trap 'kill "$APP_PID" 2>/dev/null || true' EXIT
 
                     python3 automation/healthcheck.py \
-                        --url http://127.0.0.1:8080/health
+                        --url http://127.0.0.1:8081/health
                 '''
             }
         }
