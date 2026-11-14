@@ -50,7 +50,7 @@ jobs:
       - name: Python integration check
         run: |
           python3 automation/healthcheck.py \
-            --url http://localhost:8080/health
+            --url http://localhost:8081/health
 
       - name: Show logs on failure
         if: failure()
