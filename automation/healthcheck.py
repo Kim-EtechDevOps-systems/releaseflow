@@ -38,7 +38,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--url",
-        default="http://localhost:8080/health"
+        default="http://localhost:8081/health"
     )
     args = parser.parse_args()
 

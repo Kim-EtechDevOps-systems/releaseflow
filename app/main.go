@@ -47,11 +47,11 @@ func main() {
 	}
 
 	server := &http.Server{
-		Addr:              ":8080",
+		Addr:              ":8081",
 		Handler:           newHandler(),
 		ReadHeaderTimeout: 5 * time.Second,
 	}
 
-	log.Println("ReleaseFlow listening on port 8080")
+	log.Println("ReleaseFlow listening on port 8081")
 	log.Fatal(server.ListenAndServe())
 }
